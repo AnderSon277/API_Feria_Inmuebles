@@ -65,4 +65,49 @@ class UserController extends Controller
         }
         return response()->json(compact('user'), 200);
     }
+
+    public function update(Request $request)
+    {
+        try {
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['user_not_found'], 404);
+            }
+        } catch (TokenExpiredException $e) {
+            return response()->json(['token_expired'], 401);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['token_invalid'], 401);
+        } catch (JWTException $e) {
+            return response()->json(['token_absent'], 401);
+        }
+        //validacion de campos
+        $validator = Validator::make($request->all(), [
+            'name' => 'nullable|string|max:50',
+            'last_name' => 'nullable|string|max:50',
+            'email' => 'nullable|string|email|max:100|unique:users',
+            'password' => 'nullable|string|min:6|confirmed',
+            'avatar' => 'nullable|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        $user->update($request->all());
+        return response()->json(compact('user'), 200);
+    }
+
+    public function delete()
+    {
+        try {
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['user_not_found'], 404);
+            }
+        } catch (TokenExpiredException $e) {
+            return response()->json(['token_expired'], 401);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['token_invalid'], 401);
+        } catch (JWTException $e) {
+            return response()->json(['token_absent'], 401);
+        }
+        $user->delete();
+        return response()->json(null, 204);
+    }
 }
