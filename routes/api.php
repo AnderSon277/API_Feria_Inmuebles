@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PropertyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,5 +23,12 @@ Route::group(
     ['middleware' => ['jwt.verify']],
     function () {
         Route::get('user', [UserController::class, 'getAuthenticatedUser']);
+
+        //Properties 
+        Route::get('/properties', [PropertyController::class, 'index']);
+        Route::get('/properties/{property}', [PropertyController::class, 'show']);
+        Route::post('/properties', [PropertyController::class, 'store']);
+        Route::put('/properties/{property}', [PropertyController::class, 'update']);
+        Route::delete('/properties/{property}', [PropertyController::class, 'delete']);
     }
 );
