@@ -28,7 +28,7 @@ Route::group(
         Route::delete('user', [UserController::class, 'delete']);
 
         //Properties 
-        Route::get('/properties', [PropertyController::class, 'index']);
+        //Route::get('/properties', [PropertyController::class, 'index']);
         Route::get('/properties/{property}', [PropertyController::class, 'show']);
         Route::post('/properties', [PropertyController::class, 'store']);
         Route::put('/properties/{property}', [PropertyController::class, 'update']);
