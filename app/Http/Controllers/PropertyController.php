@@ -6,6 +6,7 @@ use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class PropertyController extends Controller
 {
@@ -31,7 +32,7 @@ class PropertyController extends Controller
                 'livingrooms' => ['required', 'integer'],
                 'kitchens' => ['required', 'integer'],
                 'parkings' => ['required', 'integer'],
-                'photos' => ['required', 'string'],
+                'photos' => ['required', 'image', 'max:5000'],
                 'description' => ['required', 'string'],
                 'address' => ['required', 'string'],
                 'price' => ['required', 'integer'],
@@ -43,7 +44,19 @@ class PropertyController extends Controller
         }
         $property = new Property($request->all());
         $property->user_id = Auth::id();
-        $property->save();
+
+        if ($request->hasfile('photos')) {
+            //$myArray = array();
+            foreach ($request->file('photos') as $photo) {
+                $filename = time() . $photo->getClientOriginalName();
+                $photo->move(public_path() . '/properties/', $filename);
+                $imgData[] = $filename;
+                /*$path = $request->$photo->store('public/properties');
+                $myArray = Storage::url($path);*/
+                $property->photos = json_encode($imgData);
+                $property->save();
+            }
+        }
 
         return response()->json($property, 201);
     }
@@ -60,7 +73,7 @@ class PropertyController extends Controller
                 'livingrooms' => ['nullable', 'integer'],
                 'kitchens' => ['nullable', 'integer'],
                 'parkings' => ['nullable', 'integer'],
-                'photos' => ['nullable', 'string'],
+                'photos' => ['nullable', 'image'],
                 'description' => ['nullable', 'string'],
                 'address' => ['nullable', 'string'],
                 'price' => ['nullable', 'integer'],
