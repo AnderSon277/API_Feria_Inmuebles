@@ -32,18 +32,17 @@ class UsersTableSeeder extends Seeder
             'last_name' => 'Çordova',
             'email' => 'ander@prueba.com',
             'password' => $password,
-            'avatar' => 'avatar'
+            'avatar' => '/storage/users/' . $faker->image('public/storage/users', 400, 300, null, false)
         ]);
 
         //Usuarios con faker
-
         for ($i = 0; $i < 10; $i++) {
             User::create([
                 'name' => $faker->name,
                 'last_name' => $faker->lastName,
                 'email' => $faker->email,
                 'password' => $password,
-                'avatar' => $faker->sentence
+                'avatar' => '/storage/users/' . $faker->image('public/storage/users', 400, 300, null, false)
             ]);
         }
     }

@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\Console\Input\Input;
 
 class PropertyController extends Controller
 {
@@ -100,6 +99,8 @@ class PropertyController extends Controller
                 $property->photos = $ListPhotos;
             }
         }
+
+        $property->save();
         return response()->json($property, 200);
     }
 
