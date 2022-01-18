@@ -6,6 +6,7 @@ use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class PropertyController extends Controller
 {
@@ -31,7 +32,8 @@ class PropertyController extends Controller
                 'livingrooms' => ['required', 'integer'],
                 'kitchens' => ['required', 'integer'],
                 'parkings' => ['required', 'integer'],
-                'photos' => ['required', 'string'],
+                'photos' => ['required', 'array', 'min:0'],
+                'photos.*' => ['image', 'mimes:jpeg,png,jpg', 'max:5000'],
                 'description' => ['required', 'string'],
                 'address' => ['required', 'string'],
                 'price' => ['required', 'integer'],
@@ -41,15 +43,26 @@ class PropertyController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
+
         $property = new Property($request->all());
         $property->user_id = Auth::id();
-        $property->save();
 
+        //Subiendo imagenes al servidor y entregarndo el url 
+        if ($request->hasFile('photos')) {
+            $ListPhotos = array();
+            foreach ($request->file('photos') as $photo) {
+                $path = $photo->store('/public/properties');
+                array_push($ListPhotos, Storage::url($path));
+            }
+            $property->photos = $ListPhotos;
+        }
+        $property->save();
         return response()->json($property, 201);
     }
 
     public function update(Request $request, Property $property)
     {
+        //validacion de campos
         $validator = Validator::make(
             $request->all(),
             [
@@ -60,17 +73,34 @@ class PropertyController extends Controller
                 'livingrooms' => ['nullable', 'integer'],
                 'kitchens' => ['nullable', 'integer'],
                 'parkings' => ['nullable', 'integer'],
-                'photos' => ['nullable', 'string'],
+                'photos' => ['nullable', 'array', 'min:0'],
+                'photos.*' => ['image', 'mimes:jpeg,png,jpg', 'max:5000'],
                 'description' => ['nullable', 'string'],
                 'address' => ['nullable', 'string'],
                 'price' => ['nullable', 'integer'],
                 'type' => ['nullable', 'string']
             ]
         );
+
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         };
+
+        //Actualizar datos
         $property->update($request->all());
+
+        if (!is_null($request->photos)) {
+            if ($request->hasFile('photos')) {
+                $ListPhotos = array();
+                foreach ($request->file('photos') as $photo) {
+                    $path = $photo->store('/public/properties');
+                    array_push($ListPhotos, Storage::url($path));
+                }
+                $property->photos = $ListPhotos;
+            }
+        }
+
+        $property->save();
         return response()->json($property, 200);
     }
 

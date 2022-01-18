@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -33,21 +35,40 @@ class UserController extends Controller
             'last_name' => 'required|string|max:50',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'avatar' => 'required|string',
+            'avatar' => 'required|image|max:2000',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        $user = User::create([
-            'name' => $request->get('name'),
-            'last_name' => $request->get('last_name'),
-            'email' => $request->get('email'),
-            'avatar' => $request->get('avatar'),
-            'password' => Hash::make($request->get('password')),
-        ]);
+        $user = new User($request->all());
+
+        //Hash para password
+        $user->password = Hash::make($request->get('password'));
+
+        //Guardar imagen
+        $path = $request->avatar->store('/public/users');
+        $user->avatar = Storage::url($path);
+
+        //Guadar usuario
+        $user->save();
+
+        //Generar token
         $token = JWTAuth::fromUser($user);
-        return response()->json(compact('user', 'token'), 201);
+
+        //Retornar User y token
+        return response()->json(compact('user', 'token'), 201)
+            ->withCookie(
+                'token',
+                $token,
+                config('jwt.ttl'),
+                '/', //path
+                null,
+                config('app.env')  !== 'local',
+                true, //path
+                false,
+                config('app.env') !== 'local' ? 'None' : 'Lax'
+            );
     }
 
     public function getAuthenticatedUser()
@@ -85,13 +106,22 @@ class UserController extends Controller
             'last_name' => 'nullable|string|max:50',
             'email' => 'nullable|string|email|max:100|unique:users',
             'password' => 'nullable|string|min:6|confirmed',
-            'avatar' => 'nullable|string',
+            'avatar' => 'nullable|image',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
+
         $user->update($request->all());
-        return response()->json(compact('user'), 200);
+
+        if (!is_null($request->avatar)) {
+            $path = $request->avatar->store('public/users');
+            $user->avatar = Storage::url($path);
+        }
+
+        $user->save();
+
+        return response()->json($user, 200);
     }
 
     public function delete()
@@ -107,7 +137,39 @@ class UserController extends Controller
         } catch (JWTException $e) {
             return response()->json(['token_absent'], 401);
         }
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         $user->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         return response()->json(null, 204);
+    }
+
+    public function logout()
+    {
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            return response()->json([
+                "status" => "success",
+                "message" => "Usuario conectado exitosamente."
+            ], 200)
+                ->withCookie(
+                    'token',
+                    null,
+                    config('jwt.ttl'),
+                    '/',
+                    null,
+                    config('app.env') !== 'local',
+                    true,
+                    false,
+                    config('app.env') !== 'local' ? 'None' : 'Lax'
+                );
+        } catch (JWTException $e) {
+            // something went wrong whilst attempting to encode the token
+            return response()->json(
+                [
+                    "message" => "No se pudo cerrar la sesión " + $e
+                ],
+                500
+            );
+        }
     }
 }

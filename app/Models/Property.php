@@ -17,12 +17,16 @@ class Property extends Model
         'livingrooms',
         'kitchens',
         'parkings',
-        'photos',
         'description',
         'address',
         'price',
+        'photos',
         'type',
         'user_id'
+    ];
+
+    protected $casts = [
+        'photos' => 'array'
     ];
 
     public function user()
