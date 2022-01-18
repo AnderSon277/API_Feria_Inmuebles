@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -39,7 +40,9 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
+
         $user = new User($request->all());
+
         //Hash para password
         $user->password = Hash::make($request->get('password'));
 
@@ -108,14 +111,15 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $user = new User($request->all());
+
+        $user->update($request->all());
 
         if (!is_null($request->avatar)) {
             $path = $request->avatar->store('public/users');
-            $user->avatar = $path;
-            $user->update();
+            $user->avatar = Storage::url($path);
         }
-        return response()->json(compact('user'), 200);
+
+        return response()->json($user, 200);
     }
 
     public function delete()
@@ -131,7 +135,9 @@ class UserController extends Controller
         } catch (JWTException $e) {
             return response()->json(['token_absent'], 401);
         }
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         $user->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         return response()->json(null, 204);
     }
 

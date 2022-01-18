@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\Console\Input\Input;
 
 class PropertyController extends Controller
 {
@@ -32,7 +33,8 @@ class PropertyController extends Controller
                 'livingrooms' => ['required', 'integer'],
                 'kitchens' => ['required', 'integer'],
                 'parkings' => ['required', 'integer'],
-                'photos' => ['required', 'image', 'max:5000'],
+                'photos' => ['required', 'array', 'min:0'],
+                'photos.*' => ['image', 'mimes:jpeg,png,jpg', 'max:5000'],
                 'description' => ['required', 'string'],
                 'address' => ['required', 'string'],
                 'price' => ['required', 'integer'],
@@ -42,27 +44,26 @@ class PropertyController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
+
         $property = new Property($request->all());
         $property->user_id = Auth::id();
 
-        if ($request->hasfile('photos')) {
-            //$myArray = array();
+        //Subiendo imagenes al servidor y entregarndo el url 
+        if ($request->hasFile('photos')) {
+            $ListPhotos = array();
             foreach ($request->file('photos') as $photo) {
-                $filename = time() . $photo->getClientOriginalName();
-                $photo->move(public_path() . '/properties/', $filename);
-                $imgData[] = $filename;
-                /*$path = $request->$photo->store('public/properties');
-                $myArray = Storage::url($path);*/
-                $property->photos = json_encode($imgData);
-                $property->save();
+                $path = $photo->store('/public/properties');
+                array_push($ListPhotos, Storage::url($path));
             }
+            $property->photos = $ListPhotos;
         }
-
+        $property->save();
         return response()->json($property, 201);
     }
 
     public function update(Request $request, Property $property)
     {
+        //validacion de campos
         $validator = Validator::make(
             $request->all(),
             [
@@ -73,17 +74,32 @@ class PropertyController extends Controller
                 'livingrooms' => ['nullable', 'integer'],
                 'kitchens' => ['nullable', 'integer'],
                 'parkings' => ['nullable', 'integer'],
-                'photos' => ['nullable', 'image'],
+                'photos' => ['nullable', 'array', 'min:0'],
+                'photos.*' => ['image', 'mimes:jpeg,png,jpg', 'max:5000'],
                 'description' => ['nullable', 'string'],
                 'address' => ['nullable', 'string'],
                 'price' => ['nullable', 'integer'],
                 'type' => ['nullable', 'string']
             ]
         );
+
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         };
+
+        //Actualizar datos
         $property->update($request->all());
+
+        if (!is_null($request->photos)) {
+            if ($request->hasFile('photos')) {
+                $ListPhotos = array();
+                foreach ($request->file('photos') as $photo) {
+                    $path = $photo->store('/public/properties');
+                    array_push($ListPhotos, Storage::url($path));
+                }
+                $property->photos = $ListPhotos;
+            }
+        }
         return response()->json($property, 200);
     }
 

@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'authenticate']);
-Route::get('/properties', [PropertyController::class, 'index']);
 
 Route::group(
     ['middleware' => ['jwt.verify']],
@@ -28,7 +27,7 @@ Route::group(
         Route::delete('user', [UserController::class, 'delete']);
 
         //Properties 
-        //Route::get('/properties', [PropertyController::class, 'index']);
+        Route::get('/properties', [PropertyController::class, 'index']);
         Route::get('/properties/{property}', [PropertyController::class, 'show']);
         Route::post('/properties', [PropertyController::class, 'store']);
         Route::put('/properties/{property}', [PropertyController::class, 'update']);

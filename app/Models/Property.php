@@ -20,6 +20,7 @@ class Property extends Model
         'description',
         'address',
         'price',
+        'photos',
         'type',
         'user_id'
     ];
