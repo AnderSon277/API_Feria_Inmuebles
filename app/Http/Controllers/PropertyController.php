@@ -109,4 +109,10 @@ class PropertyController extends Controller
         $property->delete();
         return response()->json(null, 204);
     }
+
+    public function search(Request $request)
+    {
+        $title = $request->search;
+        return Property::search($title)->get();
+    }
 }

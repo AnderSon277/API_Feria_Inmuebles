@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+//use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Property extends Model
 {
-    use HasFactory;
+    //use HasFactory;
+    use Searchable;
 
     protected $fillable = [
         'title',
@@ -32,5 +34,17 @@ class Property extends Model
     public function user()
     {
         return $this->belongsTo('App\Models\User');
+    }
+
+    public function searchableAs()
+    {
+        return 'properties';
+    }
+
+    public function toSearchableArray()
+    {
+        $array = $this->toArray();
+
+        return array('title' => $array['title']);
     }
 }
