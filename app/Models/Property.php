@@ -45,6 +45,15 @@ class Property extends Model
     {
         $array = $this->toArray();
 
-        return array('title' => $array['title']);
+        return array(
+            'title' => $array['title'],
+            'description' => $array['description'],
+            'area' => $array['area'],
+            'bedrooms' => $array['bedrooms'],
+            'bathroom' => $array['bathrooms'],
+            'livingrooms' => $array['livingrooms'],
+            'kitchens' => $array['kitchens'],
+            'parkings' => $array['parkings']
+        );
     }
 }

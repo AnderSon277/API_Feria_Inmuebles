@@ -112,7 +112,21 @@ class PropertyController extends Controller
 
     public function search(Request $request)
     {
-        $title = $request->search;
-        return Property::search($title)->get();
+        $search = $request->search;
+        $area = $request->area;
+        $bedrooms = $request->bedrooms;
+        $bathrooms = $request->bathrooms;
+        $livingrooms = $request->livingrooms;
+        $kitchens = $request->kitchens;
+        $parkings = $request->parkings;
+
+        return Property::search($search)
+            ->where('area', $area)
+            ->where('bedrooms', $bedrooms)
+            ->where('bathrooms', $bathrooms)
+            ->where('livingrooms', $livingrooms)
+            ->where('kitchens', $kitchens)
+            ->where('parkings', $parkings)
+            ->get();
     }
 }
