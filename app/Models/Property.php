@@ -50,7 +50,7 @@ class Property extends Model
             'description' => $array['description'],
             'area' => $array['area'],
             'bedrooms' => $array['bedrooms'],
-            'bathroom' => $array['bathrooms'],
+            'bathrooms' => $array['bathrooms'],
             'livingrooms' => $array['livingrooms'],
             'kitchens' => $array['kitchens'],
             'parkings' => $array['parkings']
