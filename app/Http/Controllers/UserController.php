@@ -47,8 +47,11 @@ class UserController extends Controller
         $user->password = Hash::make($request->get('password'));
 
         //Guardar imagen
-        $path = $request->avatar->store('/public/users');
-        $user->avatar = Storage::url($path);
+        $path = $request->file('avatar')->store('users', 's3');
+
+        //Upload File to s3
+        Storage::disk('s3')->setVisibility($path, 'public');
+        $user->avatar = Storage::disk('s3')->url($path);
 
         //Guadar usuario
         $user->save();
@@ -115,8 +118,9 @@ class UserController extends Controller
         $user->update($request->all());
 
         if (!is_null($request->avatar)) {
-            $path = $request->avatar->store('public/users');
-            $user->avatar = Storage::url($path);
+            $path = $request->file('avatar')->store('users', 's3');
+            Storage::disk('s3')->setVisibility($path, 'public');
+            $user->avatar = Storage::disk('s3')->url($path);
         }
 
         $user->save();

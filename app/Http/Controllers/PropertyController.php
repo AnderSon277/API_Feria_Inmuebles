@@ -51,8 +51,9 @@ class PropertyController extends Controller
         if ($request->hasFile('photos')) {
             $ListPhotos = array();
             foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('/public/properties');
-                array_push($ListPhotos, Storage::url($path));
+                $path = $photo->store('properties', 's3');
+                Storage::disk('s3')->setVisibility($path, 'public');
+                array_push($ListPhotos, Storage::disk('s3')->url($path));
             }
             $property->photos = $ListPhotos;
         }
@@ -74,7 +75,7 @@ class PropertyController extends Controller
                 'kitchens' => ['nullable', 'integer'],
                 'parkings' => ['nullable', 'integer'],
                 'photos' => ['nullable', 'array', 'min:0'],
-                'photos.*' => ['image', 'mimes:jpeg,png,jpg', 'max:5000'],
+                'photos.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:5000'],
                 'description' => ['nullable', 'string'],
                 'address' => ['nullable', 'string'],
                 'price' => ['nullable', 'integer'],
@@ -93,8 +94,9 @@ class PropertyController extends Controller
             if ($request->hasFile('photos')) {
                 $ListPhotos = array();
                 foreach ($request->file('photos') as $photo) {
-                    $path = $photo->store('/public/properties');
-                    array_push($ListPhotos, Storage::url($path));
+                    $path = $photo->store('properties', 's3');
+                    Storage::disk('s3')->setVisibility($path, 'public');
+                    array_push($ListPhotos, Storage::disk('s3')->url($path));
                 }
                 $property->photos = $ListPhotos;
             }
