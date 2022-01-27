@@ -111,4 +111,29 @@ class PropertyController extends Controller
         $property->delete();
         return response()->json(null, 204);
     }
+
+    public function search(Request $request)
+    {
+        $search = $request->search;
+
+        if (!is_null($request->filters)) {
+            $area = $request->filters['area'];
+            $bedrooms = $request->filters['bedrooms'];
+            $bathrooms = $request->filters['bathrooms'];
+            $livingrooms = $request->filters['livingrooms'];
+            $kitchens = $request->filters['kitchens'];
+            $parkings = $request->filters['parkings'];
+
+            return Property::search($search)
+                ->where('area', $area)
+                ->where('bedrooms', $bedrooms)
+                ->where('bathrooms', $bathrooms)
+                ->where('livingrooms', $livingrooms)
+                ->where('kitchens', $kitchens)
+                ->where('parkings', $parkings)
+                ->get();
+        }
+
+        return Property::search($search)->get();
+    }
 }
