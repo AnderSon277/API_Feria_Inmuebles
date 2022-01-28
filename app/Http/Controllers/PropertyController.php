@@ -131,9 +131,9 @@ class PropertyController extends Controller
                 ->where('livingrooms', $livingrooms)
                 ->where('kitchens', $kitchens)
                 ->where('parkings', $parkings)
-                ->get();
+                ->paginate(5);
         }
 
-        return Property::search($search)->get();
+        return Property::search($search)->paginate(5);
     }
 }

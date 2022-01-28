@@ -2,8 +2,6 @@
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PropertyController;
-use App\Models\Property;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,9 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'authenticate']);
 
-Route::get('search', [PropertyController::class, 'search']);
-
-
 Route::group(
     ['middleware' => ['jwt.verify']],
     function () {
@@ -36,5 +31,8 @@ Route::group(
         Route::post('/properties', [PropertyController::class, 'store']);
         Route::put('/properties/{property}', [PropertyController::class, 'update']);
         Route::delete('/properties/{property}', [PropertyController::class, 'delete']);
+
+        //Search
+        Route::get('search', [PropertyController::class, 'search']);
     }
 );
