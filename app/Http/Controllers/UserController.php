@@ -12,6 +12,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Auth\Events\Registered;
 
 class UserController extends Controller
 {
@@ -55,6 +56,9 @@ class UserController extends Controller
 
         //Guadar usuario
         $user->save();
+
+        //Envio correo de confirmacion 
+        event(new Registered($user));
 
         //Generar token
         $token = JWTAuth::fromUser($user);
