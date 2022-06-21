@@ -114,6 +114,7 @@ class PropertyController extends Controller
 
     public function search(Request $request)
     {
+        //
         $search = $request->search;
 
         $filters = $request->filters;
