@@ -155,7 +155,7 @@ return [
     |
     */
 
-    'domain' => 'https://feria-para-inmuebles.vercel.app',
+    'domain' => 'feria-para-inmuebles.vercel.app',
 
     /*
     |--------------------------------------------------------------------------
