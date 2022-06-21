@@ -116,24 +116,22 @@ class PropertyController extends Controller
     {
         $search = $request->search;
 
-        if (!is_null($request->filters)) {
-            $area = $request->filters['area'];
-            $bedrooms = $request->filters['bedrooms'];
-            $bathrooms = $request->filters['bathrooms'];
-            $livingrooms = $request->filters['livingrooms'];
-            $kitchens = $request->filters['kitchens'];
-            $parkings = $request->filters['parkings'];
+        $filters = $request->filters;
 
-            return Property::search($search)
-                ->where('area', $area)
-                ->where('bedrooms', $bedrooms)
-                ->where('bathrooms', $bathrooms)
-                ->where('livingrooms', $livingrooms)
-                ->where('kitchens', $kitchens)
-                ->where('parkings', $parkings)
-                ->paginate(5);
-        }
+        $area = $filters['area'];
+        $bedrooms = $filters['bedrooms'];
+        $bathrooms = $filters['bathrooms'];
+        $livingrooms = $filters['livingrooms'];
+        $kitchens = $filters['kitchens'];
+        $parkings = $filters['parkings'];
 
-        return Property::search($search)->paginate(5);
+       return  DB::table('properties')
+        ->when($area , function ($query, $area) { $query->where('area', $area);})
+        ->when($bedrooms , function ($query, $bedrooms) { $query->where('bedrooms', $bedrooms);})
+        ->when($bathrooms , function ($query, $bathrooms) { $query->where('bathrooms', $bathrooms);})
+        ->when($livingrooms , function ($query, $livingrooms) { $query->where('livingrooms', $livingrooms);})
+        ->when($kitchens , function ($query, $kitchens) { $query->where('kitchens', $kitchens);})
+        ->when($parkings , function ($query, $parkings) { $query->where('parkings', $parkings);})
+        ->paginate(5);
     }
 }
