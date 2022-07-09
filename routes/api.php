@@ -40,7 +40,7 @@ Route::group(
         Route::get('/properties', [PropertyController::class, 'index']);
         Route::get('/properties/{property}', [PropertyController::class, 'show']);
         Route::post('/properties', [PropertyController::class, 'store']);
-        Route::put('/properties/{property}', [PropertyController::class, 'update']);
+        Route::post('/user/properties', [PropertyController::class, 'update']);
         Route::delete('/properties/{property}', [PropertyController::class, 'delete']);
 
         //Search-Engine

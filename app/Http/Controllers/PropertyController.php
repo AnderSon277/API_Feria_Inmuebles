@@ -61,8 +61,9 @@ class PropertyController extends Controller
         return response()->json($property, 201);
     }
 
-    public function update(Request $request, Property $property)
+    public function update(Request $request)
     {
+        $fields = $request->all();
         //validacion de campos
         $validator = Validator::make(
             $request->all(),
@@ -86,6 +87,8 @@ class PropertyController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         };
+
+        $property = Property::find($fields["id"]);
 
         //Actualizar datos
         $property->update($request->all());

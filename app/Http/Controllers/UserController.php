@@ -14,6 +14,7 @@ use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Auth\Events\Registered;
 
+//
 class UserController extends Controller
 {
     public function authenticate(Request $request)
