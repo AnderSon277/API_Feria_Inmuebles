@@ -112,28 +112,25 @@ class PropertyController extends Controller
         return response()->json(null, 204);
     }
 
-    public function search(Request $request)
+    public function searchEngine(Request $request)
     {
-        $search = $request->search;
+        $text = $request->text;
+        $area = $request->area;
+        $bathrooms = $request->bathrooms;
+        $bedrooms = $request->bedrooms;
+        $livingrooms = $request->livingrooms;
+        $kitchens = $request->kitchens;
+        $parkings = $request->parkings;
 
-        if (!is_null($request->filters)) {
-            $area = $request->filters['area'];
-            $bedrooms = $request->filters['bedrooms'];
-            $bathrooms = $request->filters['bathrooms'];
-            $livingrooms = $request->filters['livingrooms'];
-            $kitchens = $request->filters['kitchens'];
-            $parkings = $request->filters['parkings'];
+        return Property::search($text)->paginate(5);
+        /*->where('area', $area)
+            ->where('bedrooms', $bedrooms)
+            ->where('bathrooms', $bathrooms)
+            ->where('livingrooms', $livingrooms)
+            ->where('kitchens', $kitchens)
+            ->where('parkings', $parkings)
+            ->paginate(5);*/
 
-            return Property::search($search)
-                ->where('area', $area)
-                ->where('bedrooms', $bedrooms)
-                ->where('bathrooms', $bathrooms)
-                ->where('livingrooms', $livingrooms)
-                ->where('kitchens', $kitchens)
-                ->where('parkings', $parkings)
-                ->paginate(5);
-        }
-
-        return Property::search($search)->paginate(5);
+        // return response()->json($text, 200);
     }
 }

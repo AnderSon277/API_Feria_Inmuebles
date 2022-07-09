@@ -43,7 +43,7 @@ Route::group(
         Route::put('/properties/{property}', [PropertyController::class, 'update']);
         Route::delete('/properties/{property}', [PropertyController::class, 'delete']);
 
-        //Search
-        Route::get('search', [PropertyController::class, 'search']);
+        //Search-Engine
+        Route::post('search', [PropertyController::class, 'searchEngine']);
     }
 );

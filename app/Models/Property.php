@@ -31,6 +31,8 @@ class Property extends Model
         'photos' => 'array'
     ];
 
+    protected $touches = ['user'];
+
     public function user()
     {
         return $this->belongsTo('App\Models\User');
@@ -45,15 +47,15 @@ class Property extends Model
     {
         $array = $this->toArray();
 
-        return array(
-            'title' => $array['title'],
-            'description' => $array['description'],
-            'area' => $array['area'],
-            'bedrooms' => $array['bedrooms'],
-            'bathrooms' => $array['bathrooms'],
-            'livingrooms' => $array['livingrooms'],
-            'kitchens' => $array['kitchens'],
-            'parkings' => $array['parkings']
-        );
+        $array['title'] = $this->title;
+        $array['description'] = $this->description;
+        $array['area'] = $this->area;
+        $array['bedrooms'] = $this->bedrooms;
+        $array['bathrooms'] = $this->bathrooms;
+        $array['livingrooms'] = $this->livingrooms;
+        $array['kitchens'] = $this->kitchens;
+        $array['parkings'] = $this->parkings;
+
+        return $array;
     }
 }

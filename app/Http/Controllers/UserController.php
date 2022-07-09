@@ -34,6 +34,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:50',
             'last_name' => 'required|string|max:50',
+            'cel' => 'required|string|max:10|min:10',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6|confirmed',
             'avatar' => 'required|image|max:2000',
@@ -111,6 +112,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'nullable|string|max:50',
             'last_name' => 'nullable|string|max:50',
+            'cel' => 'required|string|max:10|min:10',
             'email' => 'nullable|string|email|max:100|unique:users',
             'password' => 'nullable|string|min:6|confirmed',
             'avatar' => 'nullable|image',

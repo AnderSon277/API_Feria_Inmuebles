@@ -25,12 +25,13 @@ class UsersTableSeeder extends Seeder
         conviene hacerlo antes del for para que el seeder
         no se vuelva lento.*/
         $password = Hash::make('123123');
-
+        $cel = '0998483572';
         // Usuario de prueba 
         User::create([
             'name' => 'Anderson',
             'last_name' => 'Çordova',
             'email' => 'ander@prueba.com',
+            'cel' => $cel,
             'password' => $password,
             'avatar' => '/storage/users/' . $faker->image('public/storage/users', 400, 300, null, false)
         ]);
@@ -42,6 +43,7 @@ class UsersTableSeeder extends Seeder
                 'last_name' => $faker->lastName,
                 'email' => $faker->email,
                 'password' => $password,
+                'cel' => $cel,
                 'avatar' => '/storage/users/' . $faker->image('public/storage/users', 400, 300, null, false)
             ]);
         }
