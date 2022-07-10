@@ -59,7 +59,7 @@ class UserController extends Controller
         //Guadar usuario
         $user->save();
 
-        //Envio correo de confirmacion 
+        //Envio correo de confirmacion
         event(new Registered($user));
 
         //Generar token
@@ -154,33 +154,8 @@ class UserController extends Controller
         return response()->json(null, 204);
     }
 
-    public function logout()
-    {
-        try {
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return response()->json([
-                "status" => "success",
-                "message" => "Usuario conectado exitosamente."
-            ], 200)
-                ->withCookie(
-                    'token',
-                    null,
-                    config('jwt.ttl'),
-                    '/',
-                    null,
-                    config('app.env') !== 'local',
-                    true,
-                    false,
-                    config('app.env') !== 'local' ? 'None' : 'Lax'
-                );
-        } catch (JWTException $e) {
-            // something went wrong whilst attempting to encode the token
-            return response()->json(
-                [
-                    "message" => "No se pudo cerrar la sesión " + $e
-                ],
-                500
-            );
-        }
+    public function logout(){
+        auth()->logout(true);
+        response()->json(["message" => "logged_out"], 200);
     }
 }
