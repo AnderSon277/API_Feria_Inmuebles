@@ -122,7 +122,7 @@ class PropertyController extends Controller
 
         $params = $request->all();
 
-        foreach ($params as $key => $value)            
+        foreach ($params as $key => $value)
             if($key === 'title' || $key === 'description' || $key === 'address') {
 
                 $clauses[] = [$key, 'LIKE', '%'.$value.'%'];
@@ -134,6 +134,17 @@ class PropertyController extends Controller
                 
             }
 
-        return Property::where($clauses)->paginate(10);
+        // add user phone number
+
+        $attributes = Auth::User()->getAttributes();
+        $cel = $attributes["cel"];
+
+         $result = Property::where($clauses)->paginate(5);
+
+        return $result->through(function ($prop) use($cel){
+            $prop["cel"] = $cel;
+            return $prop;
+        });
+
     }
 }
