@@ -45,6 +45,6 @@ Route::group(
         Route::delete('/properties/{property}', [PropertyController::class, 'delete']);
 
         //Search-Engine
-        Route::post('search', [PropertyController::class, 'searchEngine']);
+        Route::get('search', [PropertyController::class, 'searchEngine']);
     }
 );

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class PropertyController extends Controller
 {
@@ -117,23 +118,22 @@ class PropertyController extends Controller
 
     public function searchEngine(Request $request)
     {
-        $text = $request->text;
-        $area = $request->area;
-        $bathrooms = $request->bathrooms;
-        $bedrooms = $request->bedrooms;
-        $livingrooms = $request->livingrooms;
-        $kitchens = $request->kitchens;
-        $parkings = $request->parkings;
+        $clauses = [];
 
-        return Property::search($text)->paginate(5);
-        /*->where('area', $area)
-            ->where('bedrooms', $bedrooms)
-            ->where('bathrooms', $bathrooms)
-            ->where('livingrooms', $livingrooms)
-            ->where('kitchens', $kitchens)
-            ->where('parkings', $parkings)
-            ->paginate(5);*/
+        $params = $request->all();
 
-        // return response()->json($text, 200);
+        foreach ($params as $key => $value)            
+            if($key === 'title' || $key === 'description' || $key === 'address') {
+
+                $clauses[] = [$key, 'LIKE', '%'.$value.'%'];
+
+            } else {
+
+                if ($key === 'page') continue;
+                $clauses[] = [$key, '>=', $value];
+                
+            }
+
+        return Property::where($clauses)->paginate(10);
     }
 }
