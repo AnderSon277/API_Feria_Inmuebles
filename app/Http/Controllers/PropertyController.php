@@ -33,7 +33,7 @@ class PropertyController extends Controller
                 'livingrooms' => ['required', 'integer'],
                 'kitchens' => ['required', 'integer'],
                 'parkings' => ['required', 'integer'],
-                'photos' => ['required', 'array', 'min:0'],
+                'photos' => ['required', 'array', 'min:0', 'max:10'],
                 'photos.*' => ['image', 'mimes:jpeg,png,jpg', 'max:5000'],
                 'description' => ['required', 'string'],
                 'address' => ['required', 'string'],
@@ -118,20 +118,20 @@ class PropertyController extends Controller
 
     public function searchEngine(Request $request)
     {
+        //$text = $request->text;
+
         $clauses = [];
 
         $params = $request->all();
 
-        foreach ($params as $key => $value)            
-            if($key === 'title' || $key === 'description' || $key === 'address') {
+        foreach ($params as $key => $value)
+            if ($key === 'title' || $key === 'description' || $key === 'address') {
 
-                $clauses[] = [$key, 'LIKE', '%'.$value.'%'];
-
+                $clauses[] = [$key, 'LIKE', '%' . $value . '%'];
             } else {
 
                 if ($key === 'page') continue;
                 $clauses[] = [$key, '>=', $value];
-                
             }
 
         return Property::where($clauses)->paginate(10);
