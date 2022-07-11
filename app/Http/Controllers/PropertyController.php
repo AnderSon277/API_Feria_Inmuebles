@@ -118,7 +118,6 @@ class PropertyController extends Controller
 
     public function searchEngine(Request $request)
     {
-        //$text = $request->text;
 
         $clauses = [];
 
@@ -134,6 +133,6 @@ class PropertyController extends Controller
                 $clauses[] = [$key, '>=', $value];
             }
 
-        return Property::where($clauses)->paginate(10);
+        return Property::where($clauses)->paginate(5);
     }
 }
