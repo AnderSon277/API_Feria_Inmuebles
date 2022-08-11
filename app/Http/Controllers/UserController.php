@@ -113,7 +113,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'nullable|string|max:50',
             'last_name' => 'nullable|string|max:50',
-            'cel' => 'required|string|max:10|min:10',
+            'cel' => 'nullable|string|max:10|min:10',
             'email' => 'nullable|string|email|max:100|unique:users',
             'password' => 'nullable|string|min:6|confirmed',
             'avatar' => 'nullable|image',
@@ -154,7 +154,8 @@ class UserController extends Controller
         return response()->json(null, 204);
     }
 
-    public function logout(){
+    public function logout()
+    {
         auth()->logout(true);
         response()->json(["message" => "logged_out"], 200);
     }

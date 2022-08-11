@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\ForgotPasswordController;
+//use App\Http\Controllers\ForgotPasswordController;
+//use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PropertyController;
-use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +20,7 @@ Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'authenticate']);
 Route::post('logout', [UserController::class, 'logout']);
 
-Route::post('email/verification-notification', [VerificationController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
+/*Route::post('email/verification-notification', [VerificationController::class, 'sendVerificationEmail'])->middleware('auth:sanctum');
 Route::get('verify-email/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify')->middleware('auth:sanctum');
 
 
@@ -29,7 +29,7 @@ Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPassw
 Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('forget.password.post');
 Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
 Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
-
+*/
 Route::group(
     ['middleware' => ['jwt.verify']],
     function () {
@@ -41,7 +41,7 @@ Route::group(
         Route::get('/properties', [PropertyController::class, 'index']);
         Route::get('/properties/{property}', [PropertyController::class, 'show']);
         Route::post('/properties', [PropertyController::class, 'store']);
-        Route::post('/user/properties', [PropertyController::class, 'update']);
+        Route::put('/user/properties', [PropertyController::class, 'update']);
         Route::delete('/properties/{property}', [PropertyController::class, 'delete']);
 
         //Search-Engine
