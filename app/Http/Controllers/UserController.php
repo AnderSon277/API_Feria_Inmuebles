@@ -60,7 +60,7 @@ class UserController extends Controller
         $user->save();
 
         //Envio correo de confirmacion
-        event(new Registered($user));
+        //event(new Registered($user));
 
         //Generar token
         $token = JWTAuth::fromUser($user);
