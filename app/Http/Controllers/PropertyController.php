@@ -14,7 +14,7 @@ class PropertyController extends Controller
     public function index()
     {
         $id = Auth::user()->getAuthIdentifier();
-        $properties =  Property::where("user_id","=",$id)->get();
+        $properties =  Property::where("user_id", "=", $id)->get();
         return $properties;
     }
 
@@ -64,9 +64,10 @@ class PropertyController extends Controller
         return response()->json($property, 201);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, Property $property)
     {
-        $fields = $request->all();
+        $user_id = $property->user_id;
+        //$fields = $request->all();
         //validacion de campos
         $validator = Validator::make(
             $request->all(),
@@ -91,8 +92,10 @@ class PropertyController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         };
 
-        $property = Property::find($fields["id"]);
-
+        //$property = Property::find($fields["id"]);
+        if ($user_id != Auth::id()) {
+            return response()->json(['Not authorized'], 401);
+        }
         //Actualizar datos
         $property->update($request->all());
 
@@ -114,8 +117,13 @@ class PropertyController extends Controller
 
     public function delete(Property $property)
     {
-        $property->delete();
-        return response()->json(null, 204);
+        $user_id = $property->user_id;
+        if ($user_id === Auth::id()) {
+            $property->delete();
+            return response()->json(null, 204);
+        } else {
+            return response()->json(['Not authorized'], 401);
+        }
     }
 
     public function searchEngine(Request $request)
