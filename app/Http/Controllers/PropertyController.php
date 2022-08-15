@@ -13,7 +13,9 @@ class PropertyController extends Controller
 {
     public function index()
     {
-        return Property::all();
+        $id = Auth::user()->getAuthIdentifier();
+        $properties =  Property::where("user_id","=",$id)->get();
+        return $properties;
     }
 
     public function show(Property $property)
